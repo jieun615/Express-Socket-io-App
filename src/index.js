@@ -6,6 +6,7 @@ const path = require('path');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 const { addUser } = require('./utils/users');
+const { generateMessage } = require('./utils/messages');
 const io = new Server(server);
 
 io.on('connection', (socket) => {
@@ -18,6 +19,9 @@ io.on('connection', (socket) => {
         };
 
         socket.join(user.room);
+
+        socket.emit('message', generateMessage('Admin', `${user.room} 방에 오신 것을 환영합니다.`));
+        socket.broadcast.to(user.room).emit('message', generateMessage('', `${user.username}가 방에 참여했습니다.`));
     });
     socket.on('sendMessage', () => {});
     socket.on('disconnet', () => {});

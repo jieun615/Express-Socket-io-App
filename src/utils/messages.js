@@ -6,4 +6,6 @@ const generateMessage = (username, text) => {
     };
 };
 
-module.exports = generateMessage;
+module.exports = {
+    generateMessage
+};
