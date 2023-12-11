@@ -8,5 +8,25 @@ socket.emit('join', { username, room }, (error) => {
     if(error) {
         alert(error);
         location.href = '/';
-    }
-})
+    };
+});
+
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML;
+socket.on('roomData', ({ room, users }) => {
+    const html = Mustache.render(sidebarTemplate, {
+        room,
+        users
+    });
+
+    document.querySelector('#sidebar').innerHTML = html;
+});
+
+const messageTemplate = document.querySelector('#message-template').innerHTML;
+
+socket.on('message', (message) => {
+    const html = Mustache.render(messageTemplate, {
+        username: message.username,
+        message: message.text,
+        createdAt: message.createdAt
+    });
+}); 
