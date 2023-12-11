@@ -5,7 +5,7 @@ const http = require('http');
 const path = require('path');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-const { addUser, getUsersInRoom } = require('./utils/users');
+const { addUser, getUsersInRoom, getUser } = require('./utils/users');
 const { generateMessage } = require('./utils/messages');
 const io = new Server(server);
 
@@ -28,8 +28,17 @@ io.on('connection', (socket) => {
             users: getUsersInRoom(user.room)
         });
     });
-    socket.on('sendMessage', () => {});
-    socket.on('disconnet', () => {});
+
+    socket.on('sendMessage', (message, callback) => {
+        const user = getUser(socket.id);
+
+        io.to(user.room).emit('message', generateMessage(user.username, message));
+        callback();
+    });
+
+    socket.on('disconnet', () => {
+        console.log('socket disconnected', socket.id);
+    });
 });
 
 app.use(express.static(path.join(__dirname, '../public')));

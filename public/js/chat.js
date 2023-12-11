@@ -37,3 +37,25 @@ socket.on('message', (message) => {
 function scrollToBottom() {
     messages.scrollTop = messages.scrollHeight;
 };
+
+const messageForm = document.querySelector('#message-form');
+const messageFormInput = messageForm.querySelector('input');
+const messageFormButton = messageForm.querySelector('button');
+
+messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    messageFormButton.setAttribute('disabled', 'disabled');
+
+    const message = event.target.elements.message.value;
+
+    socket.emit('sendMessage', message, (error) => {
+        messageFormButton.removeAttribute('disabled');
+        messageFormInput.value = '';
+        messageFormInput.focus();
+
+        if(error) {
+            return console.log(error);
+        }
+    });
+});
