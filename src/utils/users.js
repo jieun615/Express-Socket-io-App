@@ -1,7 +1,7 @@
 const users = [];
 
 const addUser = ({ id, username, room }) => {
-    username = username.trim() || '';
+    username = username.trim();
     room = room.trim();
 
     if(!username || !room) {
