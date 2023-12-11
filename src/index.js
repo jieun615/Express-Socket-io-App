@@ -5,7 +5,7 @@ const http = require('http');
 const path = require('path');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-const { addUser, getUsersInRoom, getUser } = require('./utils/users');
+const { addUser, getUsersInRoom, getUser, removeUser } = require('./utils/users');
 const { generateMessage } = require('./utils/messages');
 const io = new Server(server);
 
@@ -38,6 +38,15 @@ io.on('connection', (socket) => {
 
     socket.on('disconnet', () => {
         console.log('socket disconnected', socket.id);
+        const user = removeUser(socket.id);
+
+        if(user) {
+            io.to(user.room).emit('message', generateMessage('Admin', `${user.username}가 방을 나갔습니다.`));
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            });
+        };
     });
 });
 
