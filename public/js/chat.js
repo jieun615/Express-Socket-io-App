@@ -1,3 +1,12 @@
-const socket = io();
+const socket = io(); 
+const query = new URLSearchParams(location.search);
 
-console.log(socket);
+const username = query.get('username');
+const room = query.get('room');
+
+socket.emit('join', { username, room }, (error) => {
+    if(error) {
+        alert(error);
+        location.href = '/';
+    }
+})
